@@ -1,0 +1,64 @@
+
+trigger:
+- master
+
+pool: 'SLA_Pool'
+
+variables:
+  USER: $(username)
+  PASS: $(password)
+  URL: $(urlArtifactory)
+
+steps:
+- task: Npm@1
+  displayName: 'Run npm ci'
+  inputs:
+    command: 'ci'
+    workingDir: 'shopping-platform'
+    
+- task: Npm@1
+  displayName: 'Run npm lint'
+  inputs:
+    command: 'custom'
+    workingDir: 'shopping-platform'
+    customCommand: 'run lint'   
+- task: Npm@1
+  displayName: 'Run unit tests'
+  inputs:
+    command: 'custom'
+    workingDir: 'shopping-platform'
+    customCommand: 'run test:unit'
+- task: PythonScript@0
+  displayName: 'Run LRD scripts'
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: 'run.py'
+- task: PublishTestResults@2
+  displayName: 'Publish LRD SLA results'
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'scripts/**/*.xml'
+    failTaskOnFailedTests: true
+- task: Npm@1
+  displayName: 'Run npm build'
+  inputs:
+    command: 'custom'
+    workingDir: 'shopping-platform'
+    customCommand: 'run build'
+- task: ArchiveFiles@2
+  displayName: 'Archive build'
+  inputs:
+    rootFolderOrFile: 'shopping-platform/dist'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: 'build.zip'
+    replaceExistingArchive: true
+- task: cURLUploader@2
+  displayName: 'Deploy'
+  inputs:
+    files: 'build.zip'
+    authType: 'UserAndPass'
+    username: '$(USER)'
+    password: '$(PASS)'
+    url: '$(URL)/build-$(Build.BuildId).zip'
+    remotePath: 
