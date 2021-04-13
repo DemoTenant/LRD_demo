@@ -9,7 +9,7 @@ variables:
   PASS: $(password)
   URL: $(urlArtifactory)
 
-#steps:
+steps:
 #- task: Npm@1
 #  displayName: 'Run npm ci'
 #  inputs:
