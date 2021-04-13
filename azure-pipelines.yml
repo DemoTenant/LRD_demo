@@ -9,25 +9,25 @@ variables:
   PASS: $(password)
   URL: $(urlArtifactory)
 
-steps:
-- task: Npm@1
-  displayName: 'Run npm ci'
-  inputs:
-    command: 'ci'
-    workingDir: 'shopping-platform'
+#steps:
+#- task: Npm@1
+#  displayName: 'Run npm ci'
+#  inputs:
+#    command: 'ci'
+#    workingDir: 'shopping-platform'
     
-- task: Npm@1
-  displayName: 'Run npm lint'
-  inputs:
-    command: 'custom'
-    workingDir: 'shopping-platform'
-    customCommand: 'run lint'   
-- task: Npm@1
-  displayName: 'Run unit tests'
-  inputs:
-    command: 'custom'
-    workingDir: 'shopping-platform'
-    customCommand: 'run test:unit'
+#- task: Npm@1
+#  displayName: 'Run npm lint'
+#  inputs:
+#    command: 'custom'
+#    workingDir: 'shopping-platform'
+#    customCommand: 'run lint'   
+#- task: Npm@1
+#  displayName: 'Run unit tests'
+#  inputs:
+#    command: 'custom'
+#    workingDir: 'shopping-platform'
+#    customCommand: 'run test:unit'
 - task: PythonScript@0
   displayName: 'Run LRD scripts'
   inputs:
